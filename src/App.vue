@@ -25,19 +25,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { onBeforeRouteUpdate } from 'vue-router';
-import { 
-  Search as SearchIcon,
-  X as XIcon,
-  Heart as HeartIcon,
-  Home as HomeIcon,
-  User as UserIcon,
-  Menu as MenuIcon, 
-  Mail as MailIcon,
-  Phone as PhoneIcon
-} from 'lucide-vue-next';
-import Button from './components/ui/button/Button.vue';
-import Card from './components/ui/card/Card.vue';
-import Input from './components/ui/input/Input.vue';
 import { Toaster } from './components/ui/toast';
 
 const isMenuOpen = ref(false);

@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 import { DropdownMenuContent as DropdownMenuPrimitiveContent } from 'reka-ui'
-import { cn } from '@/lib/utils'
 
 const props = defineProps<{
   class?: string

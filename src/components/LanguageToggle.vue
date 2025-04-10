@@ -13,7 +13,7 @@ import { useI18n } from 'vue-i18n'
 import { Button } from './ui/button'
 import { Icon } from '@iconify/vue'
 
-const { locale, t } = useI18n()
+const { locale } = useI18n()
 
 const currentLanguageLabel = computed(() => {
   return locale.value === 'es' ? 'Español' : 'English'

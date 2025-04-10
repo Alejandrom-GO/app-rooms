@@ -10,7 +10,7 @@
       
       <div class="ml-auto flex items-center space-x-4">
         <div class="relative">
-          <button @click="showSettings= !showSettings">
+          <button @click="state.showSettings = !state.showSettings">
             <settings-icon class="h-5 w-5 text-gray-700" />
           </button>
           
@@ -22,14 +22,14 @@
 
       <!-- Settings Modal -->
       <div 
-      v-if="showSettings" 
+      v-if="state.showSettings" 
       class="fixed inset-0 bg-black bg-opacity-50 z-30 flex items-center justify-center p-4"
-      @click.self="showSettings = false"
+      @click.self="state.showSettings = false"
     >
       <div class="bg-white rounded-lg w-full max-w-md p-4">
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-bold text-lg">Configuración</h3>
-          <button @click="showSettings = false">
+          <button @click="state.showSettings = false">
             <x-icon class="h-5 w-5 text-gray-700" />
           </button>
         </div>
@@ -48,7 +48,7 @@
                 @click="changeEnvironment(env)"
                 :class="[
                   'px-2 py-1 rounded-md text-xs',
-                  currentEnv === env
+                  state.currentEnv === env
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 hover:bg-gray-200'
                 ]"
@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+
 import { 
   Settings as SettingsIcon,
   X as XIcon,
@@ -122,22 +122,33 @@ import ThemeToggle from './ThemeToggle.vue';
 import LanguageToggle from './LanguageToggle.vue';
 import { getEnvironment, setEnvironment, type Environment } from '../config/environment';
 
-const router = useRouter();
-const showSettings = ref(false);
+interface NavigationState {
+  showSettings: boolean;
+  currentEnv: Environment;
+}
+
+defineOptions({
+  name: 'Navigation'
+});
+
+const state = ref<NavigationState>({
+  showSettings: false,
+  currentEnv: 'local'
+});
+
 const environments: Environment[] = ['local', 'dev', 'pro'];
-const currentEnv = ref<Environment>('local');
 
 // Cerrar el menú al hacer clic fuera de él
 const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
   if (!target.closest('.relative')) {
-    showSettings.value = false;
+    state.value.showSettings = false;
   }
 };
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
-  currentEnv.value = getEnvironment();
+  state.value.currentEnv = getEnvironment();
 });
 
 onUnmounted(() => {
@@ -146,7 +157,7 @@ onUnmounted(() => {
 
 const changeEnvironment = (env: Environment) => {
   setEnvironment(env);
-  currentEnv.value = env;
+  state.value.currentEnv = env;
   // Recargar la página para aplicar los cambios
   window.location.reload();
 };
