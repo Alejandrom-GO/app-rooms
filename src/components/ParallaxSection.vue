@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 
-const props = defineProps<{
+defineProps<{
   backgroundImage: string;
   title: string;
   description: string;

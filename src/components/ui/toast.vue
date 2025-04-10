@@ -55,8 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, InformationCircle as InfoIcon, XMark as XMarkIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, Info as InfoIcon, X as XMarkIcon } from 'lucide-vue-next';
 
 interface Toast {
   id: number;

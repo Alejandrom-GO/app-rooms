@@ -12,7 +12,6 @@ import StripePaymentView from '../views/StripePaymentView.vue'
 import PaymentSuccessView from '../views/PaymentSuccessView.vue'
 import PaymentHandlerView from '../views/PaymentHandlerView.vue'
 import { authGuard } from './guards'
-import StripePaymentHandler from '@/components/StripePaymentHandler.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {

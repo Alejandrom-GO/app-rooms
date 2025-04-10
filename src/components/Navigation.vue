@@ -109,57 +109,23 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { 
   Settings as SettingsIcon,
-  Camera as CameraIcon,
-  MapPin as MapPinIcon,
-  CreditCard as CreditCardIcon,
-  MoreVertical as MoreVerticalIcon,
-  Calendar as CalendarIcon,
-  Bell as BellIcon,
-  Lock as LockIcon,
-  Shield as ShieldIcon,
-  HelpCircle as HelpCircleIcon,
-  ChevronRight as ChevronRightIcon,
   X as XIcon,
-  Home as HomeIcon,
-  Search as SearchIcon,
-  Heart as HeartIcon,
-  User as UserIcon,
   Moon as MoonIcon,
   Globe as GlobeIcon,
   DollarSign as DollarSignIcon,
-  ChevronLeft as ChevronLeftIcon,
-  Server as ServerIcon,
-  Menu as MenuIcon,
-  LogOut as LogOutIcon
+  Server as ServerIcon
 } from 'lucide-vue-next';
-import { Button } from './ui/button';
 import ThemeToggle from './ThemeToggle.vue';
 import LanguageToggle from './LanguageToggle.vue';
 import { getEnvironment, setEnvironment, type Environment } from '../config/environment';
 
 const router = useRouter();
-const route = useRoute();
 const showSettings = ref(false);
 const environments: Environment[] = ['local', 'dev', 'pro'];
 const currentEnv = ref<Environment>('local');
-
-const navigationItems = [
-  { name: 'Inicio', href: '/', icon: HomeIcon },
-  { name: 'Buscar', href: '/search', icon: SearchIcon },
-  { name: 'Favoritos', href: '/favorites', icon: HeartIcon },
-  { name: 'Perfil', href: '/profile', icon: UserIcon }
-];
-
-const isCurrentRoute = (path: string) => {
-  return router.currentRoute.value.path === path;
-};
-
-const toggleUserMenu = () => {
-  // Implementación del menú de usuario
-};
 
 // Cerrar el menú al hacer clic fuera de él
 const handleClickOutside = (event: MouseEvent) => {

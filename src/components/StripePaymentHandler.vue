@@ -122,7 +122,7 @@ const checkPaymentStatus = async () => {
         router.push(`/payment-handler/${props.sessionId}`);
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al verificar el estado del pago:', error);
     
     // Si el error es 404 (no encontrado) y no hemos excedido el número máximo de intentos

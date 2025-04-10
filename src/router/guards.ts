@@ -3,7 +3,7 @@ import authService from '../services/auth.service';
 
 export const authGuard = async (
   to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
   // Si la ruta es pública, permitir el acceso
