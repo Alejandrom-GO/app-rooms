@@ -1,4 +1,5 @@
 <template>
+<AppLayout> 
   <div class="bg-gray-50 min-h-screen">
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-10">
@@ -251,9 +252,13 @@
                 <span 
                   v-for="(amenity, index) in room.amenities" 
                   :key="index" 
-                  class="bg-gray-100 text-xs px-2 py-1 rounded-md"
+                  class="bg-gray-100 text-xs px-2 py-1 rounded-md flex items-center"
                 >
-                  {{ amenity }}
+                  <component 
+                    :is="amenity.icon + 'Icon'"
+                    class="h-3 w-3 mr-1 text-gray-600"
+                  />
+                  {{ amenity.name }}
                 </span>
               </div>
             </div>
@@ -282,9 +287,11 @@
 
 
   </div>
+</AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../layouts/AppLayout.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { 
@@ -298,7 +305,18 @@ import {
   Frown as FrownIcon,
   Home as HomeIcon,
   User as UserIcon,
-  ArrowUpDown as ArrowUpDownIcon
+  ArrowUpDown as ArrowUpDownIcon,
+  Wifi as WifiIcon,
+  Snowflake as SnowflakeIcon,
+  Flame as FlameIcon,
+  Dumbbell as DumbbellIcon,
+  Utensils as UtensilsIcon,
+  Shirt as ShirtIcon,
+  Tv as TvIcon,
+  Car as CarIcon,
+  Waves as SwimmingPoolIcon,
+  Shield as ShieldIcon,
+  Check as CheckIcon
 } from 'lucide-vue-next';
 
 const router = useRouter();
@@ -337,86 +355,104 @@ const visibleRoomsCount = ref(2);
 const rooms = ref([]);
 const displayedRooms = ref([]);
 
-// Generate mock data
-onMounted(() => {
-  setTimeout(() => {
-    rooms.value = [
-      {
-        id: 1,
-        title: 'Habitación Individual',
-        price: 350,
-        location: 'Centro de la ciudad',
-        distance: 'A 10 min del metro',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Amueblada', 'Cocina'],
-        type: 'individual',
-        isFavorite: false,
-        isNew: true
-      },
-      {
-        id: 2,
-        title: 'Habitación Compartida',
-        price: 250,
-        location: 'Zona Universitaria',
-        distance: 'Cerca de la universidad',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Baño compartido', 'Lavandería'],
-        type: 'shared',
-        isFavorite: true,
-        isNew: false
-      },
-      {
-        id: 3,
-        title: 'Suite con Baño',
-        price: 450,
-        location: 'Zona Residencial',
-        distance: 'Barrio tranquilo',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Baño privado', 'Terraza'],
-        type: 'suite',
-        isFavorite: false,
-        isNew: false
-      },
-      {
-        id: 4,
-        title: 'Habitación Luminosa',
-        price: 380,
-        location: 'Zona Norte',
-        distance: 'A 5 min de la estación',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Amueblada', 'Balcón'],
-        type: 'individual',
-        isFavorite: false,
-        isNew: true
-      },
-      {
-        id: 5,
-        title: 'Habitación Doble',
-        price: 300,
-        location: 'Zona Sur',
-        distance: 'Cerca del parque',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Cocina compartida', 'Jardín'],
-        type: 'shared',
-        isFavorite: false,
-        isNew: false
-      },
-      {
-        id: 6,
-        title: 'Estudio Completo',
-        price: 500,
-        location: 'Centro de la ciudad',
-        distance: 'Zona comercial',
-        image: '/images/placeholder.svg?height=200&width=300',
-        amenities: ['Wifi', 'Baño privado', 'Cocina equipada'],
-        type: 'suite',
-        isFavorite: false,
-        isNew: false
+// Función para cargar las habitaciones desde la API
+async function loadRooms() {
+  loading.value = true;
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('No hay token de autenticación');
+      router.push('/login');
+      return;
+    }
+
+    const response = await fetch('https://api-rooms-node-git-main-alejandromgos-projects.vercel.app/api/rooms', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
-    ];
+    });
+
+    if (response.status === 401) {
+      console.error('Token inválido o expirado');
+      router.push('/login');
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Mapeo de iconos para los amenities
+    const amenityIconMap = {
+      'wifi': 'wifi',
+      'ac': 'snowflake',
+      'heating': 'flame',
+      'gym': 'dumbbell',
+      'kitchen': 'utensils',
+      'laundry': 'shirt',
+      'tv': 'tv',
+      'parking': 'car',
+      'pool': 'waves',
+      'security': 'shield'
+    };
+    
+    // Transformar los datos de la API al formato que espera el componente
+    rooms.value = data.data.map(room => {
+      // Determinar la URL de la imagen principal
+      let imageUrl = '/images/placeholder.svg?height=200&width=300';
+      
+      // Intentar obtener la imagen de diferentes fuentes en orden de prioridad
+      if (room.room_images && room.room_images.length > 0) {
+        imageUrl = room.room_images[0].url;
+      } else if (room.images && room.images.length > 0) {
+        imageUrl = room.images[0];
+      }
+      
+      // Procesar los amenities
+      let processedAmenities = [];
+      if (room.room_amenities && Array.isArray(room.room_amenities)) {
+        processedAmenities = room.room_amenities.map(ra => ({
+          id: ra.amenities.id,
+          name: ra.amenities.name,
+          icon: amenityIconMap[ra.amenities.icon] || 'check'
+        }));
+      } else if (room.amenities && Array.isArray(room.amenities)) {
+        processedAmenities = room.amenities.map(amenity => ({
+          id: amenity.id || 0,
+          name: amenity.name || amenity,
+          icon: amenityIconMap[amenity.icon] || 'check'
+        }));
+      }
+      
+      return {
+        id: room.id,
+        title: room.title,
+        price: room.price,
+        location: room.location,
+        distance: 'A 10 min del metro',
+        image: imageUrl,
+        amenities: processedAmenities,
+        type: room.type || 'individual',
+        isFavorite: false,
+        isNew: room.isNew || false
+      };
+    });
+    
     displayedRooms.value = rooms.value.slice(0, initialRoomsCount.value);
+    console.log('Habitaciones cargadas:', rooms.value);
+  } catch (error) {
+    console.error('Error al cargar las habitaciones:', error);
+  } finally {
     loading.value = false;
-  }, 1000);
+  }
+}
+
+// Cargar las habitaciones al montar el componente
+onMounted(() => {
+  loadRooms();
 });
 
 // Computed
@@ -474,7 +510,7 @@ const filteredRooms = computed(() => {
   if (selectedAmenities.length > 0) {
     result = result.filter(room => 
       selectedAmenities.every(amenity => 
-        room.amenities.some(a => a.toLowerCase() === amenity.toLowerCase())
+        room.amenities.some(a => a.name.toLowerCase() === amenity.toLowerCase())
       )
     );
   }

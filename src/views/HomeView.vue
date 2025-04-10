@@ -1,4 +1,5 @@
 <template>
+  <AppLayout>
   <div>
     <!-- Hero Section -->
     <section class="bg-primary text-white py-6 px-4">
@@ -67,41 +68,46 @@
       <div class="container mx-auto">
         <h2 class="text-xl font-bold mb-4">Habitaciones destacadas</h2>
         
-        <div class="grid grid-cols-1 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Room Cards -->
           <div 
+            v-for="room in featuredRooms" 
+            :key="room.id"
             class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
-            @click="viewRoomDetails(1)"
+            @click="viewRoomDetails(room.id)"
           >
             <div class="relative pb-[60%]">
               <img 
-                src="/images/placeholder.svg?height=200&width=300" 
-                alt="Habitación individual" 
+                :src="room.images[0] || '/images/placeholder.svg?height=200&width=300'" 
+                :alt="room.title" 
                 class="absolute h-full w-full object-cover"
               />
               <div class="absolute top-2 right-2 bg-white p-1 rounded-full">
                 <heart-icon class="h-5 w-5 text-gray-500" />
               </div>
+              <div v-if="room.isNew" class="absolute top-2 left-2 bg-primary text-white px-2 py-1 rounded-md text-xs font-medium">
+                Nuevo
+              </div>
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start">
-                <h3 class="font-bold">Habitación Individual</h3>
-                <span class="font-bold text-primary">$350/mes</span>
+                <h3 class="font-bold">{{ room.title }}</h3>
+                <span class="font-bold text-primary">€{{ room.price }}/mes</span>
               </div>
-              <p class="text-gray-600 text-sm mt-1">Centro de la ciudad</p>
+              <p class="text-gray-600 text-sm mt-1 flex"><map-pin-icon class="h-5 w-5 mr-1" />{{ room.location }}</p>
               <div class="flex items-center mt-2 text-sm text-gray-600">
-                <map-pin-icon class="h-4 w-4 mr-1" />
-                <span>A 10 min del metro</span>
+
+                <span>{{ room.description }}</span>
               </div>
               <div class="flex flex-wrap gap-2 mt-3">
-                <span class="bg-gray-100 text-xs px-2 py-1 rounded-md">Wifi</span>
-                <span class="bg-gray-100 text-xs px-2 py-1 rounded-md">Amueblada</span>
-                <span class="bg-gray-100 text-xs px-2 py-1 rounded-md">Cocina</span>
+                <span v-for="(amenity, index) in room.amenities" :key="index" class="bg-gray-100 text-xs px-2 py-1 rounded-md">
+                  {{ amenity.name }}
+                </span>
+
+
               </div>
             </div>
           </div>
-          
-          <!-- More room cards... -->
         </div>
       </div>
     </section>
@@ -146,9 +152,13 @@
     </section>
 
   </div>
+</AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../layouts/AppLayout.vue';
+import { ref, onMounted } from 'vue';
+
 import { 
   MapPin as MapPinIcon, 
   Calendar as CalendarIcon,
@@ -158,17 +168,94 @@ import {
   User as UserIcon,
 } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
+import { getApiBaseUrl } from '../config/environment';
+import api from '../services/api';
 
 const router = useRouter();
+const featuredRooms = ref([]);
+
+// Función para cerrar sesión
+function logout() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('user');
+  router.push('/login');
+}
+
+// Función para verificar si el token ha expirado
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expirationTime = payload.exp * 1000; // Convertir a milisegundos
+    return Date.now() >= expirationTime;
+  } catch (error) {
+    console.error('Error al verificar el token:', error);
+    return true;
+  }
+}
+
+// Función para cargar las habitaciones destacadas
+async function loadFeaturedRooms() {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('No hay token de autenticación');
+      logout();
+      return;
+    }
+
+    if (isTokenExpired(token)) {
+      console.error('El token ha expirado');
+      logout();
+      return;
+    }
+
+    const response = await api.get('/rooms/featured');
+    featuredRooms.value = response.data.data;
+  } catch (error) {
+    console.error('Error al cargar las habitaciones destacadas:', error);
+    if (error.response && error.response.status === 401) {
+      logout();
+    }
+  }
+}
+
+// Cargar las habitaciones al montar el componente
+onMounted(() => {
+  loadFeaturedRooms();
+});
 
 // Función para navegar a los detalles de la habitación
-function viewRoomDetails(roomId) {
-  console.log('Intentando navegar a detalles de habitación:', roomId);
+async function viewRoomDetails(roomId) {
+  console.log('Intentando obtener detalles de habitación:', roomId);
   try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.error('No hay token de autenticación');
+      logout();
+      return;
+    }
+
+    if (isTokenExpired(token)) {
+      console.error('El token ha expirado');
+      logout();
+      return;
+    }
+
+    const response = await api.get(`/rooms/${roomId}`);
+    const data = response.data;
+    console.log('Detalles de la habitación:', data);
+    
+    // Almacenar los detalles en localStorage para accederlos en la página de detalles
+    localStorage.setItem('currentRoomDetails', JSON.stringify(data));
+    
+    // Navegar a la página de detalles
     router.push(`/rooms/${roomId}`);
     console.log('Navegación exitosa');
   } catch (error) {
-    console.error('Error al navegar:', error);
+    console.error('Error al obtener detalles de la habitación:', error);
+    if (error.response && error.response.status === 401) {
+      logout();
+    }
   }
 }
 

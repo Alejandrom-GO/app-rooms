@@ -1,0 +1,38 @@
+{
+  "common": {
+    "search": "Buscar",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "favorites": "Favoritos",
+    "rooms": "Habitaciones",
+    "home": "Inicio",
+    "account": "Cuenta"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "loginButton": "Iniciar sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerLink": "Regístrate"
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "toggleTheme": "Cambiar tema"
+  },
+  "settings": {
+    "language": "Idioma",
+    "currency": "Moneda",
+    "darkMode": "Modo oscuro",
+    "about": "Acerca de",
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad",
+    "version": "Versión"
+  }
+} 

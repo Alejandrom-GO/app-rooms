@@ -1,4 +1,5 @@
 <template>
+<AppLayout>
   <div class="bg-gray-50 min-h-screen pb-16">
     <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-10">
@@ -214,9 +215,11 @@
     </div>
 
   </div>
+</AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../layouts/AppLayout.vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { 
   Heart as HeartIcon,

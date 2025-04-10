@@ -7,18 +7,25 @@ import AccountView from '../views/AccountView.vue'
 import RoomDetailsView from '../views/RoomDetailsView.vue'
 import Parallax from '../views/Parallax.vue'
 import ThreeScene from '../views/ThreeScene.vue'
+import ConfirmBookingView from '../views/ConfirmBookingView.vue'
+import StripePaymentView from '../views/StripePaymentView.vue'
+import PaymentSuccessView from '../views/PaymentSuccessView.vue'
+import PaymentHandlerView from '../views/PaymentHandlerView.vue'
+import { authGuard } from './guards'
+import StripePaymentHandler from '@/components/StripePaymentHandler.vue'
 
 const routes: Array<RouteRecordRaw> = [
-
   {
     path: '/login',
     name: 'login',
-    component: LoginView
+    component: LoginView,
+    meta: { public: true }
   },
   {
     path: '/',
     name: 'home',
-    component: LoginView
+    component: HomeView,
+    meta: { public: true }
   },
   {
     path: '/rooms',
@@ -43,12 +50,38 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/parallax-demo',
     name: 'parallax-demo',
-    component:  Parallax
+    component: Parallax,
+    meta: { public: true }
   },
   {
     path: '/three-demo',
     name: 'three-demo',
-    component: ThreeScene
+    component: ThreeScene,
+    meta: { public: true }
+  },
+  {
+    path: '/confirm-booking-view/:id',
+    name: 'confirm-booking-view',
+    component: ConfirmBookingView,
+    meta: { public: true }
+  },
+  {
+    path: '/payment',
+    name: 'payment',
+    component: StripePaymentView,
+    meta: { public: true }
+  },
+  {
+    path: '/payment-success',
+    name: 'payment-success',
+    component: PaymentSuccessView,
+    meta: { public: true }
+  },
+  {
+    path: '/payment-handler/:sessionId',
+    name: 'payment-handler',
+    component: PaymentHandlerView,
+    meta: { public: true }
   }
 ]
 
@@ -56,5 +89,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+// Aplicar el guard de autenticación a todas las rutas
+router.beforeEach(authGuard)
 
 export default router 

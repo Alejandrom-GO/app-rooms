@@ -1,4 +1,5 @@
 <template>
+<AppLayout>
   <div class="three-container">
     <div ref="container" class="three-canvas"></div>
     <div class="controls">
@@ -13,9 +14,11 @@
       </button>
     </div>
   </div>
+</AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../layouts/AppLayout.vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as THREE from 'three';
 

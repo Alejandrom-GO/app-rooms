@@ -1,4 +1,5 @@
 <template>
+<AppLayout>
     <div class="parallax-container">
         <div class="parallax-card" ref="cardRef">
             <!-- Fondo con gradiente -->
@@ -23,9 +24,11 @@
             </div>
         </div>
     </div>
+</AppLayout>
 </template>
 
 <script setup>
+import AppLayout from '../layouts/AppLayout.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const cardRef = ref(null);

@@ -1,0 +1,38 @@
+{
+  "common": {
+    "search": "Search",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "settings": "Settings",
+    "profile": "Profile",
+    "favorites": "Favorites",
+    "rooms": "Rooms",
+    "home": "Home",
+    "account": "Account"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "rememberMe": "Remember me",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggleTheme": "Toggle theme"
+  },
+  "settings": {
+    "language": "Language",
+    "currency": "Currency",
+    "darkMode": "Dark mode",
+    "about": "About",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
+    "version": "Version"
+  }
+} 

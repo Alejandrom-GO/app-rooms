@@ -1,96 +1,103 @@
 <template>
-  <AppLayout>
-    <div class="flex-1 flex items-center justify-center p-4">
-      <Card class="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Iniciar sesión</CardTitle>
-          <CardDescription>
-            Ingresa tus credenciales para acceder a tu cuenta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form @submit="onSubmit" class="space-y-4">
-            <FormField v-slot="{ componentField }" name="email" :validate-on-blur="!isFieldDirty">
-              <FormItem v-auto-animate>
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl>
+  <AuthLayout>
+    <Card class="w-full shadow-lg">
+      <CardHeader class="text-center pb-0">
+        <CardTitle class="text-2xl">Iniciar sesión</CardTitle>
+        <CardDescription>
+          Ingresa tus credenciales para acceder a tu cuenta
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="pt-0">
+        <form @submit="onSubmit" class="space-y-1.5">
+          <FormField v-slot="{ componentField }" name="email" :validate-on-blur="!isFieldDirty">
+            <FormItem v-auto-animate>
+              <FormLabel>Correo electrónico</FormLabel>
+              <FormControl>
+                <Input 
+                  type="email" 
+                  placeholder="tu@ejemplo.com" 
+                  v-bind="componentField"
+                  :disabled="isLoading"
+                  class="w-full"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          
+          <FormField v-slot="{ componentField }" name="password" :validate-on-blur="!isFieldDirty">
+            <FormItem v-auto-animate>
+              <div class="flex items-center justify-between">
+                <FormLabel>Contraseña</FormLabel>
+                <a href="/forgot-password" class="text-sm text-primary hover:underline">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </div>
+              <FormControl>
+                <div class="relative">
                   <Input 
-                    type="email" 
-                    placeholder="tu@ejemplo.com" 
+                    :type="showPassword ? 'text' : 'password'" 
+                    placeholder="••••••••" 
                     v-bind="componentField"
+                    :disabled="isLoading"
+                    class="w-full"
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-            
-            <FormField v-slot="{ componentField }" name="password" :validate-on-blur="!isFieldDirty">
-              <FormItem v-auto-animate>
-                <div class="flex items-center justify-between">
-                  <FormLabel>Contraseña</FormLabel>
-                  <a href="/forgot-password" class="text-sm text-primary hover:underline">
-                    ¿Olvidaste tu contraseña?
-                  </a>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon" 
+                    class="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                    @click="showPassword = !showPassword"
+                    :disabled="isLoading"
+                  >
+                    <EyeIcon v-if="!showPassword" class="h-4 w-4" />
+                    <EyeOffIcon v-else class="h-4 w-4" />
+                  </Button>
                 </div>
-                <FormControl>
-                  <div class="relative">
-                    <Input 
-                      :type="showPassword ? 'text' : 'password'" 
-                      placeholder="••••••••" 
-                      v-bind="componentField"
-                    />
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="icon" 
-                      class="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                      @click="showPassword = !showPassword"
-                    >
-                      <EyeIcon v-if="!showPassword" class="h-4 w-4" />
-                      <EyeOffIcon v-else class="h-4 w-4" />
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-            
-            <FormField v-slot="{ componentField }" name="rememberMe">
-              <FormItem v-auto-animate>
-                <FormControl>
-                  <div class="flex items-center space-x-2">
-                    <Checkbox v-bind="componentField" />
-                    <label 
-                      class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Recordarme
-                    </label>
-                  </div>
-                </FormControl>
-              </FormItem>
-            </FormField>
-            
-            <Button type="submit" class="w-full" :disabled="isLoading">
-              <Loader2Icon v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
-              Iniciar sesión
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter>
-          <p class="text-center text-sm text-muted-foreground w-full">
-            ¿No tienes una cuenta?
-            <a href="/register" class="text-primary hover:underline font-medium">
-              Regístrate
-            </a>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
-  </AppLayout>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          
+          <FormField v-slot="{ componentField }" name="rememberMe">
+            <FormItem v-auto-animate>
+              <FormControl>
+                <div class="flex items-center space-x-2">
+                  <Checkbox v-bind="componentField" :disabled="isLoading" />
+                  <label 
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Recordarme
+                  </label>
+                </div>
+              </FormControl>
+            </FormItem>
+          </FormField>
+          
+          <div v-if="error" class="text-destructive text-sm text-center p-2 bg-destructive/10 rounded-md">
+            {{ error }}
+          </div>
+          
+          <Button type="submit" class="w-full" :disabled="isLoading">
+            <Loader2Icon v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ isLoading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+          </Button>
+        </form>
+      </CardContent>
+      <CardFooter class="pt-0">
+        <p class="text-center text-sm text-muted-foreground w-full">
+          ¿No tienes una cuenta?
+          <a href="/register" class="text-primary hover:underline font-medium">
+            Regístrate
+          </a>
+        </p>
+      </CardFooter>
+    </Card>
+  </AuthLayout>
 </template>
 
 <script setup lang="ts">
-import AppLayout from '../layouts/AppLayout.vue';
+import AuthLayout from '../layouts/AuthLayout.vue';
 import { ref } from 'vue';
 import { 
   Eye as EyeIcon, 
@@ -101,6 +108,9 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { vAutoAnimate } from '@formkit/auto-animate/vue';
 import * as z from 'zod';
+import { useRouter, useRoute } from 'vue-router';
+import authService from '../services/auth.service';
+import { useToast } from '../components/ui/toast/use-toast';
 
 // Importación de componentes UI
 import { Button } from '../components/ui/button';
@@ -119,6 +129,13 @@ import {
 
 const showPassword = ref(false);
 const isLoading = ref(false);
+const router = useRouter();
+const { toast } = useToast();
+const error = ref('');
+
+// Obtener la ruta de redirección de los parámetros de la URL
+const route = useRoute();
+const redirectPath = route.query.redirect as string || '/';
 
 const formSchema = toTypedSchema(z.object({
   email: z.string()
@@ -134,16 +151,38 @@ const { handleSubmit, isFieldDirty } = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
+  error.value = '';
   
-  // En una aplicación real, aquí harías la llamada a la API
-  setTimeout(() => {
-    console.log('Login con:', values);
-    // Redirigir al usuario (en una app real)
-    // router.push('/dashboard');
+  try {
+    const response = await authService.login({
+      email: values.email,
+      password: values.password
+    });
+    
+    if (values.rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    }
+    
+    toast({
+      title: '¡Bienvenido!',
+      description: response.message || 'Inicio de sesión exitoso',
+    });
+    
+    // Redirigir a la ruta solicitada o a la página principal
+    router.push(redirectPath);
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
+    error.value = errorMessage;
+    toast({
+      variant: 'destructive',
+      title: 'Error',
+      description: errorMessage,
+    });
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
 });
 </script>
 

@@ -2,7 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "opener:default",
@@ -43,6 +45,7 @@
     "dialog:allow-ask",
     "dialog:allow-confirm",
     "dialog:allow-save",
-    "dialog:allow-message"
+    "dialog:allow-message",
+    "opener:default"
   ]
 }
